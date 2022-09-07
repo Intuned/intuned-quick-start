@@ -1,0 +1,47 @@
+{
+  "name": "Intuned",
+  "logo": "/logo.svg",
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#0091BE",
+    "light": "#ED007D",
+    "dark": "#00789E",
+    "ultraLight": "#FFDFF0",
+    "ultraDark": "#00516A"
+  },
+  "topbarLinks": [],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://www.intunedhq.com/h2"
+  },
+  "anchors": [
+    {
+      "name": "Demo",
+      "icon": "circle-play",
+      "url": "https://www.youtube.com/watch?v=xzFTvSwFaqs"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["introduction", "kusto", "sql-samples"]
+    },
+    {
+      "group": "Updates",
+      "pages": ["release-notes", "sql-limitations"]
+    },
+    {
+      "group": "Configuration",
+      "pages": ["linear-connector"]
+    }
+  ],
+  "footerSocials": {
+    "facebook": "https://www.facebook.com/IntunedHQ",
+    "twitter": "https://twitter.com/IntunedHQ",
+    "linkedin": "https://www.linkedin.com/company/82287935"
+  },
+  "classes": {
+    "anchors": "group-hover:bg-gradient-to-br from-[#ed007d] to-[#00a5d9]",
+    "activeAnchors": "bg-gradient-to-br"
+  }
+}

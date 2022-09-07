@@ -1,0 +1,105 @@
+---
+title: "SQL Samples"
+---
+
+## GitHub
+
+```sql
+--PR Review Time
+SELECT
+    repo,
+    url,
+    title,
+    "user",
+    prReviewTime = DATEDIFF(hh,createdAt,mergedAt)
+FROM GithubPullRequests
+WHERE mergedAt IS NOT NULL AND closedAt > getdate()-30;
+```
+
+```sql
+--Pull Requests count by user
+SELECT
+    "user",
+    COUNT(*) as pr_count
+FROM GithubPullRequests
+WHERE createdAt > getdate()-30
+GROUP BY "user"
+ORDER BY pr_count;
+```
+
+```sql
+--Pull Requests count per week
+SELECT
+  DATEPART(week, createdAt) AS "week",
+  COUNT() AS pr_count
+FROM GithubPullRequests
+GROUP BY DATEPART(week, createdAt)
+ORDER BY DATEPART(week, createdAt);
+```
+
+```sql
+--Files changed by user
+SELECT
+	"user",
+	SUM(changedFiles) AS sum_changedfiles
+FROM GithubPullRequests
+GROUP BY "user"
+ORDER BY sum_changedfiles;
+```
+
+```sql
+--Pull Requests count per week per user
+SELECT
+  DATEPART(week, createdAt) AS "week",
+  COUNT() AS pr_count,
+  "user"
+FROM GithubPullRequests
+GROUP BY DATEPART(week, createdAt), "user"
+ORDER BY DATEPART(week, createdAt);
+```
+
+```sql
+--Comments size by user
+SELECT
+    "user",
+    SUM(commentSize) AS sumOfCommentsLength
+FROM
+(
+    SELECT
+        "user",
+        SUM(LEN(body)) AS commentSize
+    FROM GithubPullRequestReviewComments
+    GROUP BY "user"
+    UNION
+    SELECT
+        "user",
+        SUM(LEN(body)) AS commentSize
+    FROM GithubPullRequestReviews
+    GROUP BY "user"
+) T
+GROUP BY "user"
+ORDER BY sumOfCommentsLength
+```
+
+```sql
+--Comments by user
+SELECT
+    "user",
+    SUM(commentsCount) AS countOfComments
+FROM
+(
+    SELECT
+        "user",
+        COUNT() AS commentsCount
+    FROM GithubPullRequestReviewComments
+    GROUP BY "user"
+    UNION
+    SELECT
+        "user",
+        COUNT() AS commentsCount
+    FROM GithubPullRequestReviews
+    GROUP BY "user"
+) T
+GROUP BY "user"
+ORDER BY countOfComments
+```

@@ -1,0 +1,210 @@
+---
+title: "Kusto Examples"
+---
+
+## GitHub
+
+### Overview
+
+```jsx
+//PR Review Time
+GithubPullRequests
+| where updated between (ago(7d)  .. now())
+| where isnotnull(mergedAt)
+| project repo, url, ['title'], user, prReviewTime = createdAt-mergedAt
+
+GithubPullRequests
+| where createdAt between (_startTime .. _endTime)
+| where user != "dependabot[bot]"
+| summarize prs = count() by bin_at(createdAt, 7d,now())
+
+// PR's closed per day in the last 30 days
+GithubPullRequests
+| where closedAt > ago(30d)
+| summarize count() by bin(closedAt, 1d)
+| render columnchart
+```
+
+### User views
+
+```jsx
+//Pull Requests count by user per week
+GithubPullRequests
+| where createdAt > ago(100d)
+| where user != "dependabot[bot]"
+| summarize count() by user, bin_at(createdAt, 7d, now())
+| render timechart
+
+//Pull Requests count by user
+GithubPullRequests
+| where createdAt > ago(100d)
+| where user != "dependabot[bot]"
+| summarize count() by user
+
+//Files changed by user
+GithubPullRequests
+| where createdAt > ago(100d)
+| where user != "dependabot[bot]"
+| project url, ['title'], user , changedFiles
+| summarize sum(changedFiles) by user
+
+//PR review time 50th and 90th percentile by user
+GithubPullRequests
+| where isnotnull(mergedAt)
+| extend  openTime = closedAt - createdAt
+| summarize percentiles(openTime, 50, 90) by user
+| project user, percentile_openTime_50, percentile_openTime_90
+| sort by percentile_openTime_90 desc
+
+//Comments size by user
+let Comments =
+GithubPullRequestReviewComments
+| where createdAt between (ago(90d) .. now())
+| summarize comments = sum(strlen(body)) by user;
+GithubPullRequestReviews
+| where submittedAt between (ago(90d) .. now())
+| summarize reviews = sum(strlen(body)) by user
+| join kind=leftouter Comments on $left.user == $right.user
+| summarize sum(comments) + sum(reviews) by user
+
+//Comments by user
+let Comments =
+GithubPullRequestReviewComments
+| where createdAt between (ago(90d) .. now())
+| summarize comments = count() by user;
+GithubPullRequestReviews
+| where submittedAt between (ago(90d) .. now())
+| summarize reviews = count() by user
+| join kind=leftouter Comments on $left.user == $right.user
+| summarize sum(comments) + sum(reviews) by user
+```
+
+### Repo views
+
+```jsx
+//Pull Requests count by repo
+GithubPullRequests
+| summarize count() by repo
+```
+
+## Jira
+
+### Jira Hygene
+
+```jsx
+// Table of Epics
+Jira
+| where issueTypeName == "Epic"
+| project EpicKey = key, EpicSummary = summary);
+
+//Oldest epics
+Jira
+| where projectKey == "MS"
+| where statusCategoryName != "Done" and statusCategoryName != "Complete"
+| extend openTime = now() - created
+| project key, summary, statusCategoryName, openTime
+| order by openTime desc
+
+//Bugs, tasks, subtasks without a parent
+Jira
+| where issueTypeName != "Epic"
+| where parentKey == ""
+| project key, summary, issueTypeName, assigneeDisplayName
+```
+
+### Story point analysis
+
+```jsx
+//Story points per epic
+let _startTime = ago(90d);
+let _endTime = now();
+let Epics = Jira
+| where issueTypeName == "Epic"
+| where updated between (_startTime  .. _endTime)
+| project EpicKey = key, EpicSummary = summary;
+Jira
+| where projectKey == "MS"
+| where updated between (_startTime  .. _endTime)
+| join kind=leftouter Epics on $left.parentKey == $right.EpicKey
+| summarize StoryPointTotal = sum(storyPoints) by EpicSummary
+| sort by StoryPointTotal
+
+//Story point per dev
+let _startTime = ago(90d);
+let _endTime = now();
+Jira
+| where updated between (_startTime  .. _endTime)
+| where assigneeDisplayName != ""
+| summarize StoryPointTotal = sum(storyPoints) by assigneeDisplayName
+
+//Story points per dev per epic
+let _startTime = ago(90d);
+let _endTime = now();
+let Epics = Jira
+| where issueTypeName == "Epic"
+| where updated between (_startTime  .. _endTime)
+| project EpicKey = key, EpicSummary = summary;
+Jira
+| where projectKey == "MS"
+| where updated between (_startTime  .. _endTime)
+| join kind=leftouter Epics on $left.parentKey == $right.EpicKey
+| summarize StoryPointTotal = sum(storyPoints) by EpicSummary, assigneeDisplayName
+| sort by EpicSummary
+| project assigneeDisplayName, EpicSummary, StoryPointTotal
+```
+
+## Linear
+
+### Overview
+
+```jsx
+// Count of issues completed by cycle
+LinearIssues
+| where cycleId != ""
+| summarize count() by toint(cycleNumber)
+| render barchart
+
+// Count of issues completed by assigneeName
+LinearIssues
+| where cycleId != ""
+| summarize count() by assigneeName
+| render barchart
+
+// Time to close issues by assigneeName
+LinearIssues
+| where assigneeName != ""
+| extend openTime = completedAt - startedAt
+| summarize percentiles(openTime, 50, 90) by assigneeName
+| sort by assigneeName desc
+```
+
+### Per cycle analysis
+
+```jsx
+//Avergage issues completed by a person per cycle
+LinearIssues
+| where cycleId != ""
+| summarize count() by cycleNumber, assigneeName
+| summarize percentiles(count_, 50, 90)
+
+//Average issues completed by assignee per cycle
+LinearIssues
+| where cycleId != "" and assigneeName != ""
+| summarize count() by cycleNumber, assigneeName
+| summarize percentiles(count_, 50) by assigneeName
+| render barchart
+
+// Time to close issues per cycle
+LinearIssues
+| where cycleId != ""
+| extend openTime = completedAt - startedAt
+| summarize percentiles(openTime, 50, 90) by cycleNumber
+| sort by cycleNumber desc
+
+// Time to close issues by assignee per cycle
+LinearIssues
+| where cycleId != "" and assigneeName != ""
+| extend openTime = completedAt - startedAt
+| summarize percentiles(openTime, 50, 90) by cycleNumber, assigneeName
+| sort by cycleNumber desc
+```

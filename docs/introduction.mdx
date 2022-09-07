@@ -1,0 +1,113 @@
+---
+title: "Intuned 101"
+---
+
+## Concepts
+
+- `Workspace` - is automatically created for those who sign up to Intuned, once created the workspace owner can invite others as collaborators in the same workspace
+- `Connectors` - are the conduit to centralize and sync your team's data into a shared central workspace. Note connector configuration is global to the workspace, thus it is shared amongst collaborators
+- `Metrics` - are simply custom query results which are automatically tracked over time in a table for you to review as you make improvements.
+- `Notifications` - is the custom alerting mechanism that allows you to get notified periodically or when some in the query results change.
+- `Worksheets` - is the container to save queries and share them with others.
+- `Views` - allows you to augment query results into a saved table you can call upon within your queries
+
+## Explore
+
+To explore and learn more about your team's data connected in Intuned, you can navigate to Explore.
+
+To help you learn more about your, Explore is broken down into 3 main components:
+
+- Resource Manager allows you to view and manage worksheets and table schemas for your connected data sources, metrics, and custom views.
+- Query Editor is where you go about actually writing up the queries, Intuned supports SQL and Kusto as the querying language
+- Query Results is where you will see the results of the query either in table or chart form depending on the query
+
+<Frame>
+  <img class="w-full" src="/images/explore.png" alt="Explore" />
+</Frame>
+
+### Resource manager
+
+Resource manager provides you with the following capabilities:
+
+- view, create and delete shared and private worksheets to save queries
+- view the table schema of the data sources from the connected tools and metrics you’ve created.
+- view, create, and delete views to augment query results into a saved result you can call upon similar to a table
+
+Worksheets
+
+- Workspace worksheets are visible to all who are invited to the workspace
+  - Known limitation is collaborating on the same worksheet is not possible right now
+- Private worksheets are only visible to you
+
+### Query editor
+
+Both Kusto Query Language and SQL are supported. Kusto has wider support while SQL has some limitations. To switch between the two simpily toggle the control on the editor and then run the respective query.
+
+To run a query, type in a query and select the query you wish to run in the editor experience and then hit run or “Shift + Enter”. You can find samples here: [Samples (notion.site)](https://www.notion.so/Kusto-Samples-56415bdf9f1a482181fe80ca3db6eb5c)
+
+## Connectors
+
+<Card
+  title="Linear Connector"
+  icon={
+    <svg
+      width="64"
+      height="64"
+      viewBox="0 0 64 64"
+      fill="#5E6AD2"
+      class="h-6 w-6"
+      aria-label="Linear Logotype"
+    >
+      <path d="M0.403013 37.3991L26.6009 63.597C13.2225 61.3356 2.66442 50.7775 0.403013 37.3991Z"></path>
+      <path d="M0 30.2868L33.7132 64C35.7182 63.8929 37.6742 63.6013 39.5645 63.142L0.85799 24.4355C0.398679 26.3259 0.10713 28.2818 0 30.2868Z"></path>
+      <path d="M2.53593 19.4042L44.5958 61.4641C46.1277 60.8066 47.598 60.0331 48.9956 59.1546L4.84543 15.0044C3.96691 16.402 3.19339 17.8723 2.53593 19.4042Z"></path>
+      <path d="M7.69501 11.1447C13.5677 4.32093 22.2677 0 31.9769 0C49.6628 0 64 14.3372 64 32.0231C64 41.7323 59.6791 50.4323 52.8553 56.305L7.69501 11.1447Z"></path>
+    </svg>
+  }
+  href="/linear-connector"
+>
+  Analyze your team's Linear data alongside your engineering tools like GitHub
+  and track and measure your team's performance, project lifecycles, issues and
+  more in Intuned.
+</Card>
+
+## Metrics
+
+### Create metrics
+
+<Frame>
+  <img class="w-full" src="/images/metrics.png" alt="Metrics" />
+</Frame>
+
+To create a metric:
+
+- Navigate to Metrics and select “Create metric”
+- Then provide the required prarameters
+  - Metric Name: This name must be unique and cannot contain any spaces or special characters as it will be used as the table name
+  - Cron expression to schedule: This cron expression will configure when and how frequently the query will be run to capture and store the results in to the metric table along side the timestamp of when the query was run.
+  - Query: This query is filtered to calulate a specific metric you are looking for, and it will be captured in a regular cadence as defined by the cron expression.
+- Then come back after some time and you will find a table with the query results associated with a timestamp.
+
+### Manage metrics
+
+To manaage a metric:
+
+- Navigate to Metrics, find the Metric you wish to manage
+- To delete a metric, use the trash bin icon and select “Delete Metrics” on the confirmation
+- To update a Metric, use the pencil icon and select “Edit Metrics”
+- To preview a metric, use the magnifine glass icon to “Preview Metrics”
+
+## Notifications
+
+Notification is made up of 2 main components
+
+- The trigger is the condition that will result in an action. Intuned’s triggers run every 10 minutes to evaluate if trigger condition has been met.
+- The action is the email or slack notification that is sent once a trigger activated
+
+### Periodic Trigger
+
+If there is any query result you wish to check up on a regular bases, then you can use Periodic Trigger for these types of results you have to share frequently
+
+### Query change Trigger
+
+If there is a query result you wish to get notified when things change, then you can use a Query Based Trigger.
