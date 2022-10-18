@@ -32,7 +32,7 @@
     },
     {
       "group": "Configuration",
-      "pages": ["linear-connector", "slack-integration"]
+      "pages": ["linear-connector", "jira-connector", "slack-integration"]
     }
   ],
   "footerSocials": {
