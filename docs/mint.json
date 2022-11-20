@@ -7,7 +7,11 @@
     "light": "#ED007D",
     "dark": "#00789E",
     "ultraLight": "#FFDFF0",
-    "ultraDark": "#00516A"
+    "ultraDark": "#00516A",
+    "background": {
+      "from": "#ED007D",
+      "to": "#00A5D9"
+    }
   },
   "topbarLinks": [],
   "topbarCtaButton": {
@@ -39,9 +43,5 @@
     "facebook": "https://www.facebook.com/IntunedHQ",
     "twitter": "https://twitter.com/IntunedHQ",
     "linkedin": "https://www.linkedin.com/company/82287935"
-  },
-  "classes": {
-    "anchors": "group-hover:bg-gradient-to-br from-[#ed007d] to-[#00a5d9]",
-    "activeAnchors": "bg-gradient-to-br"
   }
 }
