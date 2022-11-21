@@ -8,7 +8,7 @@
     "dark": "#00789E",
     "ultraLight": "#FFDFF0",
     "ultraDark": "#00516A",
-    "background": {
+    "anchors": {
       "from": "#ED007D",
       "to": "#00A5D9"
     }
