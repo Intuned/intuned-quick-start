@@ -28,11 +28,11 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "kusto", "sql-samples"]
+      "pages": ["introduction", "kusto"]
     },
     {
       "group": "Updates",
-      "pages": ["release-notes", "sql-limitations"]
+      "pages": ["release-notes"]
     },
     {
       "group": "Configuration",
