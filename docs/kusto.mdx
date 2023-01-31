@@ -11,7 +11,7 @@ title: "Kusto Examples"
 GithubPullRequests
 | where updated between (ago(7d)  .. now())
 | where isnotnull(mergedAt)
-| project repo, url, ['title'], user, prReviewTime = createdAt-mergedAt
+| project repository, url, ['title'], user, prReviewTime = createdAt-mergedAt
 
 GithubPullRequests
 | where createdAt between (_startTime .. _endTime)
