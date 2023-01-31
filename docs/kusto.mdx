@@ -7,11 +7,12 @@ title: "Kusto Examples"
 ### Overview
 
 ```jsx
-//PR Review Time
+//PR open time
 GithubPullRequests
 | where updated between (ago(7d)  .. now())
 | where isnotnull(mergedAt)
-| project repository, url, ['title'], user, prReviewTime = createdAt-mergedAt
+| extend  openTime = (closedAt - createdAt)/1d // calculate the time PR was open in days
+| project repository, url, ['title'], user, openTime
 
 GithubPullRequests
 | where createdAt between (_startTime .. _endTime)
@@ -48,10 +49,10 @@ GithubPullRequests
 | project url, ['title'], user , changedFiles
 | summarize sum(changedFiles) by user
 
-//PR review time 50th and 90th percentile by user
+//PR open time 50th and 90th percentile by user
 GithubPullRequests
 | where isnotnull(mergedAt)
-| extend  openTime = closedAt - createdAt
+| extend  openTime = (closedAt - createdAt)/1d // calculate the time PR was open in days
 | summarize percentiles(openTime, 50, 90) by user
 | project user, percentile_openTime_50, percentile_openTime_90
 | sort by percentile_openTime_90 desc
